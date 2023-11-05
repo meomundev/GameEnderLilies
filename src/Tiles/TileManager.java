@@ -1,6 +1,7 @@
 package Tiles;
 
 import Main.GamePanel;
+import Main.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,34 +19,58 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-
-        tile = new Tile[10];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        tile = new Tile[25];
 
         getTileImage();
         loadMap();
     }
 
     public void getTileImage() {
+
+        setup(0, "space", true);
+        setup(1, "fountain", false);
+        setup(2, "outPostLeftTop", false);
+        setup(3, "outPostTop", false);
+        setup(4, "outPostRightTop", false);
+        setup(5, "outPostLeft", false);
+        setup(6, "outPostRight", false);
+        setup(7, "outPostLeftBot", false);
+        setup(8, "outPostBot", false);
+        setup(9, "outPostRightBot", false);
+        setup(15, "glass", false);
+        setup(20, "outPostLeftRight", false);
+        setup(21, "outPostLeftRightTop", false);
+// ve cau
+        setup(10, "outPostTopBridge", false);
+        setup(11, "outPostBotBridge", false);
+        setup(12, "bridgeTop", false);
+        setup(13, "bridge", false);
+        setup(14, "bridgeBot", false);
+// ve doc
+        setup(16, "glassSwap", false);
+        setup(17, "glassSwapRight", false);
+        setup(18, "poison", false);
+        setup(19, "poisonBot", false);
+    }
+
+    public void setup(int index, String imageName, boolean collision) {
+        UtilityTool uTool = new UtilityTool();
         try {
-            tile[0] = new Tile();
-            tile[0].image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/num0.png")));
+            InputStream inputStream = getClass().getResourceAsStream("/tiles/" + imageName + ".png");
 
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/ground.png")));
-            tile[1].collision = true;
-
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/num2.png")));
-
-            tile[3] = new Tile();
-            tile[3].image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/num3.png")));
-        }
-        catch (IOException e) {
+            if (inputStream != null) {
+                tile[index] = new Tile();
+                tile[index].image = ImageIO.read(inputStream);
+                tile[index].image = uTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
+                tile[index].collision = collision;
+            } else {
+                System.err.println("Could not load image: " + imageName);
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     public void loadMap() {
         try {
             InputStream is = getClass().getResourceAsStream("/map/map.txt");
@@ -104,7 +129,7 @@ public class TileManager {
                 screenY = gp.screenHeight - (gp.worldHeight - worldY);
             }
 
-            g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(tile[tileNum].image, screenX, screenY, null);
             worldCol++;
 
             if (worldCol == gp.maxWorldCol) {
