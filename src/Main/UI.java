@@ -14,6 +14,7 @@ public class UI {
     BufferedImage heartFull, heartHalf, heartEmpty;
 
     public int commandNum = 0;
+    public String currentDialogue = "";
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -27,17 +28,19 @@ public class UI {
 
     public void draw(Graphics2D g2) {
         this.g2 = g2; // Khởi tạo g2 ở đây
-
-        // Title state
+// Title state
         if (gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
         g2.setFont(arial_40);
         g2.setColor(Color.WHITE);
-
-        // Play state
+// Play state
         if (gp.gameState == gp.playState) {
             drawPlayerLife();
+        }
+// Dialogue state
+        if (gp.gameState == gp.dialogueState) {
+            drawDialogueScreen();
         }
     }
 
@@ -67,7 +70,27 @@ public class UI {
             x += gp.tileSize;
         }
     }
+    public void drawDialogueScreen() {
+        int x = gp.tileSize * 2;
+        int y = gp.tileSize / 2;
+        int width = gp.screenWidth - (gp.tileSize * 4);
+        int height = gp.tileSize * 4;
+        drawSubWindow(x, y, width, height);
 
+        g2.setColor(Color.white);
+        g2.setFont(arial_40);
+        x += gp.tileSize;
+        y += gp.tileSize;
+        for (String line : currentDialogue.split("\n")) {
+            g2.drawString(line, x, y);
+            y += gp.tileSize;
+        }
+    }
+    public void drawSubWindow(int x, int y, int width, int height) {
+        Color c = new Color(0, 0, 0, 150);
+        g2.setColor(c);
+        g2.fillRoundRect(x, y, width, height, 70, 70);
+    }
     public void drawTitleScreen() {
         if (g2 == null) {
             System.out.println("g2 is null");
@@ -96,7 +119,7 @@ public class UI {
         g2.drawImage(gp.lilies.right, x, y, gp.tileSize * 2, gp.tileSize * 2, null);
 
         // Menu
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
         g2.setColor(Color.white);
 
         String text1 = "Play game";

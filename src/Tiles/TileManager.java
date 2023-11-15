@@ -20,36 +20,61 @@ public class TileManager {
     public TileManager(GamePanel gp) {
         this.gp = gp;
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
-        tile = new Tile[25];
+        tile = new Tile[60];
 
         getTileImage();
         loadMap();
     }
 
     public void getTileImage() {
-
-        setup(0, "space", true);
+// ve nuoc
+        setup(0, "water1", true);
         setup(1, "fountain", false);
-        setup(2, "outPostLeftTop", false);
-        setup(3, "outPostTop", false);
-        setup(4, "outPostRightTop", false);
-        setup(5, "outPostLeft", false);
-        setup(6, "outPostRight", false);
-        setup(7, "outPostLeftBot", false);
-        setup(8, "outPostBot", false);
-        setup(9, "outPostRightBot", false);
-        setup(15, "glass", false);
-        setup(20, "outPostLeftRight", false);
-        setup(21, "outPostLeftRightTop", false);
+        setup(2, "waterWithGroundTop", true);
+        setup(3, "waterWithGroundBot", true);
+        setup(4, "waterWithGroundLeft", true);
+        setup(5, "waterWithGroundRight", true);
+        setup(6, "waterWithGroundTopLeftSmall", true);
+        setup(7, "waterWithGroundTopRightSmall", true);
+        setup(8, "waterWithGroundBotLeft", true);
+        setup(9, "waterWithGroundBotRight", true);
+        setup(11, "waterWithGroundBotLeftSmall", true);
+        setup(12, "waterWithGroundBotRightSmall", true);
+        setup(15, "waterWithGroundTopUpdate", true);
+        setup(16, "waterWithGroundBotUpdate", true);
+        setup(17, "waterWithRock", true);
+        setup(21, "waterWithGroundTopLeft", true);
+        setup(22, "waterWithGroundTopRight", true);
+        setup(23, "highGroundGlassTop", true);
+        setup(24, "highGroundGlassTopRight", true);
+        setup(25, "highGroundGlassTopWaterBot", true);
+        setup(26, "highGroundGlassTopAndBot", true);
+        setup(27, "highGroundGlassBot", true);
+        setup(28, "highGround", true);
+        setup(29, "highGroundFar", true);
+        setup(30, "highGroundGlassTopFar", true);
+        setup(31, "highGroundGlassBotFar", true);
+        setup(32, "highGroundGlassTopLeftBig", true);
+        setup(33, "highGroundGlassRightLeftBig", true);
+        setup(34, "highGroundGlassLeftBig", true);
+        setup(35, "highGroundGlassBotRightLeftBig", true);
+        setup(36, "highGroundGlassTopSmallLeftBig", true);
+        setup(37, "highGroundGlassLeftFar", true);
+        setup(38, "highGroundGlassLeftBotSmallFar", true);
+        setup(39, "highGroundGlassLeftTopSmallFar", true);
+        setup(40, "highGroundWaterBot", true);
+        setup(41, "highGroundWaterBotRight", true);
+        setup(42, "highGroundWaterRight", true);
+        setup(43, "highGroundGlassTopSmallLeftBigWaterRight", true);
+        setup(44, "highGroundGlassTopSmallWaterRight", true);
+        setup(45, "stair", false);
+// ve dat
+        setup(10, "ground", false);
 // ve cau
-        setup(10, "outPostTopBridge", false);
-        setup(11, "outPostBotBridge", false);
-        setup(12, "bridgeTop", false);
+        setup(20, "bridge", false);
         setup(13, "bridge", false);
         setup(14, "bridgeBot", false);
 // ve doc
-        setup(16, "glassSwap", false);
-        setup(17, "glassSwapRight", false);
         setup(18, "poison", false);
         setup(19, "poisonBot", false);
     }
@@ -73,7 +98,7 @@ public class TileManager {
     }
     public void loadMap() {
         try {
-            InputStream is = getClass().getResourceAsStream("/map/map.txt");
+            InputStream is = getClass().getResourceAsStream("/map/mapDemo.txt");
             assert is != null;
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 

@@ -22,13 +22,25 @@ public class Entity {
     public int spriteCounter = 0;
     public int spriteNum = 1;
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
+    public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
+    public int type; // player = 0; npc = 1; monster = 2;
     public int actionLockCounter = 0;
     public boolean invincible = false;
     public int invincibleCounter = 0;
+    boolean attacking = false;
     public int maxLife;
     public int life;
+    public int useCost;
+    public Projectile projectile;
+    public int shootCounter = 0;
+    String[] dialogue = new String[20];
+    int dialogueIndex = 0;
+    boolean hpOn = false;
+    public boolean alive = true;
+    public boolean dying = false;
+    int dyingCounter = 0;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -37,30 +49,70 @@ public class Entity {
     public void setAction() {
 
     }
+    public void damageReaction() {
 
+    }
+    public void speak() {
+        gp.ui.currentDialogue = dialogue[dialogueIndex];
+        dialogueIndex++;
+        if (dialogue[dialogueIndex] == null) {
+            dialogueIndex = 0;
+        }
+        switch (gp.lilies.direction) {
+            case "up" -> direction = "down";
+            case "down" -> direction = "up";
+            case "left" -> direction = "right";
+            case "right" -> direction = "left";
+        }
+    }
+    public void dyingAnimation(Graphics2D g2) {
+        dyingCounter++;
+        int i = 5;
+        if (dyingCounter <= i) {
+            changeAlpha(g2, 0f);
+        } else if (dyingCounter <= i*2) {
+            changeAlpha(g2, 1f);
+        } else if (dyingCounter <= i*3) {
+            changeAlpha(g2, 0f);
+        } else if (dyingCounter <= i*4) {
+            changeAlpha(g2, 1f);
+        } else if (dyingCounter <= i*5) {
+            changeAlpha(g2, 0f);
+        } else if (dyingCounter <= i*6) {
+            changeAlpha(g2, 1f);
+        } else if (dyingCounter <= i*7) {
+            changeAlpha(g2, 0f);
+        } else if (dyingCounter <= i*8) {
+            changeAlpha(g2, 1f);
+        } else {
+            alive = false;
+        }
+    }
+    public void changeAlpha(Graphics2D g2, float alpha) {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+    }
     public void update() {
         setAction();
         collisionOn = false;
         gp.collisionCheck.checkTile(this);
+        gp.collisionCheck.checkObject(this, false);
         gp.collisionCheck.checkEntity(this, gp.monster);
+        boolean contactLilies = gp.collisionCheck.checkPlayer(this);
 
-        int newWorldX = worldX;
-        int newWorldY = worldY;
-
-        if (!collisionOn) {
-            switch (direction) {
-                case "up" -> newWorldY -= speed;
-                case "down" -> newWorldY += speed;
-                case "left" -> newWorldX -= speed;
-                case "right" -> newWorldX += speed;
+        if (this.type == 2 && contactLilies) {
+            if (!gp.lilies.invincible) {
+                gp.lilies.life -= 1;
+                gp.lilies.invincible = true;
             }
         }
 
-        // Kiểm tra xem quái vật có vượt ra khỏi giới hạn màn hình không
-        if (newWorldX >= 0 && newWorldX <= gp.worldWidth && newWorldY >= 0 && newWorldY <= gp.worldHeight) {
-            // Nếu quái vật vẫn ở trong giới hạn màn hình, cập nhật tọa độ mới
-            worldX = newWorldX;
-            worldY = newWorldY;
+        if (!collisionOn) {
+            switch (direction) {
+                case "up" -> worldY -= speed;
+                case "down" -> worldY += speed;
+                case "left" -> worldX -= speed;
+                case "right" -> worldX += speed;
+            }
         }
 
         spriteCounter++;
@@ -72,20 +124,25 @@ public class Entity {
             }
             spriteCounter = 0;
         }
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 30) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
     }
-
-    public BufferedImage setup(String imagePath) {
+    public BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
-            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+            image = uTool.scaleImage(image, width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return image;
     }
-
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
         int screenX = worldX - gp.lilies.worldX + gp.lilies.screenX;
@@ -121,7 +178,35 @@ public class Entity {
                     }
                 }
             }
+// HP monster
+            if (type == 2 && hpOn) {
+                double oneHP = (double) gp.tileSize / maxLife;
+                double monsterHP = oneHP * life;
+
+                g2.setColor(new Color(80, 80, 80));
+                g2.fillRect(screenX - 1, screenY - 16, gp.tileSize + 2, 9);
+                g2.setColor(new Color(255, 0, 30));
+                g2.fillRect(screenX, screenY - 15, (int) monsterHP, 8);
+            }
+// thoi gian invicible
+            if (invincible) {
+                int invincibleCounterMod = invincibleCounter % 60;
+                hpOn = true;
+                if (invincibleCounterMod < 6 ||
+                        (invincibleCounterMod >= 12 && invincibleCounterMod < 18) ||
+                        (invincibleCounterMod >= 24 && invincibleCounterMod < 30) ||
+                        (invincibleCounterMod >= 36 && invincibleCounterMod < 42) ||
+                        (invincibleCounterMod >= 48 && invincibleCounterMod < 54)) {
+                    changeAlpha(g2, 0.3f);
+                } else {
+                    changeAlpha(g2, 1f);
+                }
+                if (dying) {
+                    dyingAnimation(g2);
+                }
+            }
             g2.drawImage(image, screenX, screenY, null);
+            changeAlpha(g2, 1f);
         }
     }
 }

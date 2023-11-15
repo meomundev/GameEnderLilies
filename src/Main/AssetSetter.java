@@ -2,6 +2,7 @@ package Main;
 
 import Entity.NPC;
 import Monster.BatMonster;
+import Monster.BugMonster;
 import Objects.Door;
 import Objects.Key;
 
@@ -35,15 +36,35 @@ public class AssetSetter {
         }
 
         gp.monster[0] = new BatMonster(gp);
-        gp.monster[0].worldX = gp.tileSize * 18;
-        gp.monster[0].worldY = gp.tileSize * 20;
+        gp.monster[0].worldX = gp.tileSize * 32;
+        gp.monster[0].worldY = gp.tileSize * 11;
 
         gp.monster[1] = new BatMonster(gp);
-        gp.monster[1].worldX = gp.tileSize * 19;
-        gp.monster[1].worldY = gp.tileSize * 20;
+        gp.monster[1].worldX = gp.tileSize * 33;
+        gp.monster[1].worldY = gp.tileSize * 12;
+
+        gp.monster[2] = new BatMonster(gp);
+        gp.monster[2].worldX = gp.tileSize * 34;
+        gp.monster[2].worldY = gp.tileSize * 11;
+
+        gp.monster[3] = new BatMonster(gp);
+        gp.monster[3].worldX = gp.tileSize * 32;
+        gp.monster[3].worldY = gp.tileSize * 13;
+
+        gp.monster[4] = new BugMonster(gp);
+        gp.monster[4].worldX = gp.tileSize * 31;
+        gp.monster[4].worldY = gp.tileSize * 11;
+
+        gp.monster[5] = new BugMonster(gp);
+        gp.monster[5].worldX = gp.tileSize * 35;
+        gp.monster[5].worldY = gp.tileSize * 11;
 
         // Thêm các quái vật vào danh sách entityList
         gp.entityList.add(gp.monster[0]);
         gp.entityList.add(gp.monster[1]);
+        gp.entityList.add(gp.monster[2]);
+        gp.entityList.add(gp.monster[3]);
+        gp.entityList.add(gp.monster[4]);
+        gp.entityList.add(gp.monster[5]);
     }
 }

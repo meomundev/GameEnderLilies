@@ -7,13 +7,15 @@ import java.awt.*;
 import java.util.Random;
 
 public class BatMonster extends Entity {
+    GamePanel gp;
     public BatMonster(GamePanel gp) {
         super(gp);
-
+        this.gp = gp;
+        type = 2;
         direction = "up";
         name = "BatMonster";
-        speed = 2;
-        maxLife = 2;
+        speed = 6;
+        maxLife = 3;
         life = maxLife;
 
         solidArea = new Rectangle();
@@ -26,15 +28,15 @@ public class BatMonster extends Entity {
         getImage();
     }
     public void getImage() {
-        up = setup("/monster/batUp1");
-        upMove1 = setup("/monster/batUp1");
-        upMove2 = setup("/monster/batUp2");
-        downMove1 = setup("/monster/batDown1");
-        downMove2 = setup("/monster/batDown2");
-        leftMove1 = setup("/monster/batLeft1");
-        leftMove2 = setup("/monster/batLeft2");
-        rightMove1 = setup("/monster/batRight1");
-        rightMove2 = setup("/monster/batRight2");
+        up = setup("/monster/batUp1", gp.tileSize, gp.tileSize);
+        upMove1 = setup("/monster/batUp1", gp.tileSize, gp.tileSize);
+        upMove2 = setup("/monster/batUp2", gp.tileSize, gp.tileSize);
+        downMove1 = setup("/monster/batDown1", gp.tileSize, gp.tileSize);
+        downMove2 = setup("/monster/batDown2", gp.tileSize, gp.tileSize);
+        leftMove1 = setup("/monster/batLeft1", gp.tileSize, gp.tileSize);
+        leftMove2 = setup("/monster/batLeft2", gp.tileSize, gp.tileSize);
+        rightMove1 = setup("/monster/batRight1", gp.tileSize, gp.tileSize);
+        rightMove2 = setup("/monster/batRight2", gp.tileSize, gp.tileSize);
     }
     public void setAction() {
         actionLockCounter++;
@@ -55,5 +57,9 @@ public class BatMonster extends Entity {
             }
             actionLockCounter = 0;
         }
+    }
+    public void damageReaction() {
+        actionLockCounter = 0;
+        direction = gp.lilies.direction;
     }
 }

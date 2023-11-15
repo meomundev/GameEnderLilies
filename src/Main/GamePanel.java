@@ -9,6 +9,8 @@ import Tiles.TileManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -29,10 +31,9 @@ public class GamePanel extends JPanel implements Runnable{
 
 // FPS of game
     int FPS = 60;
-
-
-    TileManager tileManager = new TileManager(this);
     Thread gameThread;
+// khoi tao
+    public TileManager tileManager = new TileManager(this);
     public CollisionCheck collisionCheck = new CollisionCheck(this);
     KeyHandler keyHandler = new KeyHandler();
     public UI ui = new UI(this);
@@ -42,15 +43,16 @@ public class GamePanel extends JPanel implements Runnable{
     public SuperObject[] object = new SuperObject[10];
     public Entity[] npc = new Entity[10];
     public Entity[] monster = new Entity[20];
+    public ArrayList<Entity> projectileList = new ArrayList<>();
     public ArrayList<Entity> entityList = new ArrayList<>();
 // game state
     public int gameState;
     public final int titleState = 0;
     public final int playState = 1;
+    public final int dialogueState = 2;
 
     public GamePanel() {
         keyHandler.gp = this;
-        tileManager = new TileManager(this);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight)); //kich thuoc uu tien
         this.setBackground(Color.black); //set mau nen
         this.setDoubleBuffered(true); //tao ra bộ đệm thu 2 de tranh hien tuong nhap nhay giup game muot ma hon
@@ -78,12 +80,12 @@ public class GamePanel extends JPanel implements Runnable{
         while (gameThread != null) { //khi game thread ton tai se thuc hien [1.Update: vi tri charater] [2.Draw: ve man hinh khi nhan vat da update]
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
-            lastTime = currentTime;
             if(delta >= 1) {
                 update();
                 repaint(); //dung de goi phuong thuc paintComponent
                 delta--;
             }
+            lastTime = currentTime;
         }
     }
 
@@ -100,7 +102,18 @@ public class GamePanel extends JPanel implements Runnable{
 // update quai vat
             for (Entity entity : monster) {
                 if (entity != null) {
-                    entity.update();
+                    if (entity.alive) {
+                        entity.update();
+                    }
+                }
+            }
+            for (int i = 0; i < projectileList.size(); i++) {
+                if (projectileList.get(i) != null) {
+                    if (projectileList.get(i).alive) {
+                        projectileList.get(i).update();
+                    } else if (!projectileList.get(i).alive) {
+                        projectileList.remove(i);
+                    }
                 }
             }
         }
@@ -113,21 +126,60 @@ public class GamePanel extends JPanel implements Runnable{
 
         if (gameState == titleState) {
             ui.draw(g2);
-        } else if (gameState == playState) {  // Đảm bảo rằng game ở trạng thái playState
+        }
+        else if (gameState == playState) {  // Đảm bảo rằng game ở trạng thái playState
             tileManager.draw(g2);
             for (SuperObject superObject : object) {
                 if (superObject != null) {
                     superObject.draw(g2, this);
                 }
             }
-            lilies.draw(g2);
             for (Entity value : npc) {
                 if (value != null) {
                     value.draw(g2);
                 }
             }
+            for (Entity value : monster) {
+                if (value != null) {
+                    entityList.add(value);
+                }
+            }
+            for (Entity value : projectileList) {
+                if (value != null) {
+                    entityList.add(value);
+                }
+            }
+            entityList.sort(new Comparator<Entity>() {
+                @Override
+                public int compare(Entity o1, Entity o2) {
+                    return Integer.compare(o1.worldX, o2.worldY);
+                }
+            });
+            for (Entity entity : entityList) {
+                entity.draw(g2);
+            }
             entityList.clear();
-
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == dialogueState) {
+            tileManager.draw(g2);
+            for (SuperObject superObject : object) {
+                if (superObject != null) {
+                    superObject.draw(g2, this);
+                }
+            }
+            for (Entity value : npc) {
+                if (value != null) {
+                    value.draw(g2);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
             ui.draw(g2);
         }
         g2.dispose();
