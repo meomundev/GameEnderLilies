@@ -2,6 +2,7 @@ package Monster;
 
 import Entity.Entity;
 import Main.GamePanel;
+import Objects.ProjectileDemon;
 
 import java.awt.*;
 import java.util.Random;
@@ -11,12 +12,16 @@ public class BatMonster extends Entity {
     public BatMonster(GamePanel gp) {
         super(gp);
         this.gp = gp;
-        type = 2;
+        type = typeMonster;
         direction = "up";
-        name = "BatMonster";
+        name = "Bat Monster";
         speed = 6;
         maxLife = 3;
         life = maxLife;
+        attack = 2;
+        defense = 0;
+        exp = 2;
+        projectile = new ProjectileDemon(gp);
 
         solidArea = new Rectangle();
         solidArea.x = gp.tileSize / 3;
@@ -56,6 +61,14 @@ public class BatMonster extends Entity {
                 direction = "right";
             }
             actionLockCounter = 0;
+        }
+        for (int i = 0; i <= 100; i++) {
+            if (i == 100 && shootCounter == 90) {
+                projectile.set(worldX, worldY, direction, true, this);
+                gp.projectileList.add(projectile);
+                shootCounter = 0;
+                i = 0;
+            }
         }
     }
     public void damageReaction() {

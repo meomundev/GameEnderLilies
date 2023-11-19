@@ -11,12 +11,13 @@ public class BugMonster extends Entity {
     public BugMonster(GamePanel gp) {
         super(gp);
         this.gp = gp;
-        type = 2;
+        type = typeMonster;
         direction = "up";
-        name = "BugMonster";
+        name = "Bug Monster";
         speed = 4;
         maxLife = 5;
         life = maxLife;
+        exp = 2;
 
         solidArea = new Rectangle();
         solidArea.x = gp.tileSize / 3;

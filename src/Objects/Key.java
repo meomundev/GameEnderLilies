@@ -1,18 +1,14 @@
 package Objects;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.IOException;
-import java.util.Objects;
+import Entity.Entity;
+import Main.GamePanel;
 
-public class Key extends SuperObject{
-    public Key() {
+public class Key extends Entity {
+    public Key(GamePanel gp) {
+        super(gp);
+
         name = "Key";
-        try{
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/key.png")));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        downMove1 = setup("/objects/key", gp.tileSize, gp.tileSize);
+        description = "[" + name + "]\nKey";
     }
 }

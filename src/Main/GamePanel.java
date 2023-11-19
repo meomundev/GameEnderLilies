@@ -2,14 +2,11 @@ package Main;
 
 import Entity.Entity;
 import Entity.Lilies;
-import Objects.Heart;
-import Objects.SuperObject;
 import Tiles.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -37,10 +34,10 @@ public class GamePanel extends JPanel implements Runnable{
     public CollisionCheck collisionCheck = new CollisionCheck(this);
     KeyHandler keyHandler = new KeyHandler();
     public UI ui = new UI(this);
-    AssetSetter aSetter = new AssetSetter(this);
+    public AssetSetter aSetter = new AssetSetter(this);
 // entity
     public Lilies lilies = new Lilies(this, keyHandler);
-    public SuperObject[] object = new SuperObject[10];
+    public Entity[] object = new Entity[10];
     public Entity[] npc = new Entity[10];
     public Entity[] monster = new Entity[20];
     public ArrayList<Entity> projectileList = new ArrayList<>();
@@ -50,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable{
     public final int titleState = 0;
     public final int playState = 1;
     public final int dialogueState = 2;
+    public final int characterState = 3;
+    public final int inventoryState = 4;
 
     public GamePanel() {
         keyHandler.gp = this;
@@ -129,11 +128,6 @@ public class GamePanel extends JPanel implements Runnable{
         }
         else if (gameState == playState) {  // Đảm bảo rằng game ở trạng thái playState
             tileManager.draw(g2);
-            for (SuperObject superObject : object) {
-                if (superObject != null) {
-                    superObject.draw(g2, this);
-                }
-            }
             for (Entity value : npc) {
                 if (value != null) {
                     value.draw(g2);
@@ -149,12 +143,18 @@ public class GamePanel extends JPanel implements Runnable{
                     entityList.add(value);
                 }
             }
+            for (Entity value : object) {
+                if (value != null) {
+                    value.draw(g2);
+                }
+            }
             entityList.sort(new Comparator<Entity>() {
                 @Override
                 public int compare(Entity o1, Entity o2) {
                     return Integer.compare(o1.worldX, o2.worldY);
                 }
             });
+
             for (Entity entity : entityList) {
                 entity.draw(g2);
             }
@@ -164,14 +164,54 @@ public class GamePanel extends JPanel implements Runnable{
         }
         else if (gameState == dialogueState) {
             tileManager.draw(g2);
-            for (SuperObject superObject : object) {
-                if (superObject != null) {
-                    superObject.draw(g2, this);
-                }
-            }
             for (Entity value : npc) {
                 if (value != null) {
                     value.draw(g2);
+                }
+            }
+            for (Entity item : object) {
+                if (item != null) {
+                    entityList.add(item);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == characterState) {
+            tileManager.draw(g2);
+            for (Entity value : npc) {
+                if (value != null) {
+                    value.draw(g2);
+                }
+            }
+            for (Entity item : object) {
+                if (item != null) {
+                    entityList.add(item);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == inventoryState) {
+            tileManager.draw(g2);
+            for (Entity value : npc) {
+                if (value != null) {
+                    value.draw(g2);
+                }
+            }
+            for (Entity item : object) {
+                if (item != null) {
+                    entityList.add(item);
                 }
             }
             for (Entity entity : entityList) {

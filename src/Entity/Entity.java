@@ -18,7 +18,7 @@ public class Entity {
     public String name;
     public BufferedImage up, upMove1, upMove2, down, downMove1, downMove2, left, leftMove1, leftMove2, right, rightMove1, rightMove2;
     public BufferedImage downAttack1, downAttack2, upAttack1, upAttack2, leftAttack1, leftAttack2, rightAttack1, rightAttack2;
-    public String direction;
+    public String direction = "down";
     public int spriteCounter = 0;
     public int spriteNum = 1;
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
@@ -26,10 +26,29 @@ public class Entity {
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
     public int type; // player = 0; npc = 1; monster = 2;
+    public int typeLilies = 0;
+    public int typeNPC = 1;
+    public int typeMonster = 2;
+    public int typeSword = 3;
+    public int typeShield = 4;
+    public int typeConsumable = 5;
     public int actionLockCounter = 0;
     public boolean invincible = false;
     public int invincibleCounter = 0;
     boolean attacking = false;
+    public int level;
+    public int strength;
+    public int dexterity;
+    public int attack;
+    public int defense;
+    public int exp;
+    public int nextLevelExp;
+    public int coin;
+    public Entity currentWeapon;
+    public Entity currentShield;
+    public int attackValue;
+    public int defenseValue;
+    public String description = "";
     public int maxLife;
     public int life;
     public int useCost;
@@ -41,16 +60,27 @@ public class Entity {
     public boolean alive = true;
     public boolean dying = false;
     int dyingCounter = 0;
+    public BufferedImage image, image2, image3;
+    public boolean collision = false;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
     }
-
     public void setAction() {
 
     }
     public void damageReaction() {
 
+    }
+    public void damagePlayer(int attack) {
+        if (!gp.lilies.invincible) {
+            int damage = attack - gp.lilies.defense;
+            if (damage <= 0) {
+                damage = 0;
+            }
+            gp.lilies.life -= damage;
+            gp.lilies.invincible = true;
+        }
     }
     public void speak() {
         gp.ui.currentDialogue = dialogue[dialogueIndex];
@@ -99,11 +129,8 @@ public class Entity {
         gp.collisionCheck.checkEntity(this, gp.monster);
         boolean contactLilies = gp.collisionCheck.checkPlayer(this);
 
-        if (this.type == 2 && contactLilies) {
-            if (!gp.lilies.invincible) {
-                gp.lilies.life -= 1;
-                gp.lilies.invincible = true;
-            }
+        if (this.type == typeMonster && contactLilies) {
+            damagePlayer(attack);
         }
 
         if (!collisionOn) {
@@ -131,18 +158,26 @@ public class Entity {
                 invincibleCounter = 0;
             }
         }
+        if (shootCounter < 100) {
+            shootCounter++;
+        }
     }
     public BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
+            if (image == null) {
+                System.err.println("Error loading image: " + imagePath);
+                return null;
+            }
             image = uTool.scaleImage(image, width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return image;
     }
+
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
         int screenX = worldX - gp.lilies.worldX + gp.lilies.screenX;
