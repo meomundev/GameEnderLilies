@@ -90,39 +90,41 @@ public class CollisionCheck {
     }
     public int checkObject(Entity entity, boolean lilies) {
         int index = 999;
-        for (int i = 0; i < gp.object.length; i++) {
-            if (gp.object[i] != null) {
-                entity.solidArea.x = entity.worldX + entity.solidArea.x;
-                entity.solidArea.y = entity.worldY + entity.solidArea.y;
-                gp.object[i].solidArea.x = gp.object[i].worldX + gp.object[i].solidArea.x;
-                gp.object[i].solidArea.y = gp.object[i].worldY + gp.object[i].solidArea.y;
+        if (gp.object != null && gp.object != null) {
+            for (int i = 0; i < gp.object.length; i++) {
+                if (gp.object[i] != null) {
+                    entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                    entity.solidArea.y = entity.worldY + entity.solidArea.y;
+                    gp.object[i].solidArea.x = gp.object[i].worldX + gp.object[i].solidArea.x;
+                    gp.object[i].solidArea.y = gp.object[i].worldY + gp.object[i].solidArea.y;
 
-                switch (entity.direction) {
-                    case "up":
-                        entity.solidArea.y -= entity.speed;
-                        break;
-                    case "down":
-                        entity.solidArea.y += entity.speed;
-                        break;
-                    case "left":
-                        entity.solidArea.x -= entity.speed;
-                        break;
-                    case "right":
-                        entity.solidArea.x += entity.speed;
-                        break;
-                }
-                if (entity.solidArea.intersects(gp.object[i].solidArea)) {
-                    if (gp.object[i].collision) {
-                        entity.collisionOn = true;
+                    switch (entity.direction) {
+                        case "up":
+                            entity.solidArea.y -= entity.speed;
+                            break;
+                        case "down":
+                            entity.solidArea.y += entity.speed;
+                            break;
+                        case "left":
+                            entity.solidArea.x -= entity.speed;
+                            break;
+                        case "right":
+                            entity.solidArea.x += entity.speed;
+                            break;
                     }
-                    if (lilies) {
-                        index = i;
+                    if (entity.solidArea.intersects(gp.object[i].solidArea)) {
+                        if (gp.object[i].collision) {
+                            entity.collisionOn = true;
+                        }
+                        if (lilies) {
+                            index = i;
+                        }
                     }
+                    entity.solidArea.x = entity.solidAreaDefaultX;
+                    entity.solidArea.y = entity.solidAreaDefaultY;
+                    gp.object[i].solidArea.x = gp.object[i].solidAreaDefaultX;
+                    gp.object[i].solidArea.y = gp.object[i].solidAreaDefaultY;
                 }
-                entity.solidArea.x = entity.solidAreaDefaultX;
-                entity.solidArea.y = entity.solidAreaDefaultY;
-                gp.object[i].solidArea.x = gp.object[i].solidAreaDefaultX;
-                gp.object[i].solidArea.y = gp.object[i].solidAreaDefaultY;
             }
         }
         return index;

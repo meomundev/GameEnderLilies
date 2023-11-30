@@ -19,11 +19,11 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         tile = new Tile[60];
+        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap();
+        loadMap("/map/mapTest.txt");
     }
 
     public void getTileImage() {
@@ -78,7 +78,6 @@ public class TileManager {
         setup(18, "poison", false);
         setup(19, "poisonBot", false);
     }
-
     public void setup(int index, String imageName, boolean collision) {
         UtilityTool uTool = new UtilityTool();
         try {
@@ -96,9 +95,9 @@ public class TileManager {
             e.printStackTrace();
         }
     }
-    public void loadMap() {
+    public void loadMap(String fileMap) {
         try {
-            InputStream is = getClass().getResourceAsStream("/map/mapTest.txt");
+            InputStream is = getClass().getResourceAsStream(fileMap);
             assert is != null;
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
@@ -154,7 +153,10 @@ public class TileManager {
                 screenY = gp.screenHeight - (gp.worldHeight - worldY);
             }
 
-            g2.drawImage(tile[tileNum].image, screenX, screenY, null);
+            if (worldX + gp.tileSize > gp.lilies.worldX - gp.lilies.screenX && worldX - gp.tileSize < gp.lilies.worldX + gp.lilies.screenX && worldY + gp.tileSize > gp.lilies.worldY - gp.lilies.screenY && worldY - gp.tileSize < gp.lilies.worldY + gp.lilies.screenY) {
+                g2.drawImage(tile[tileNum].image, screenX, screenY, null);
+            }
+
             worldCol++;
 
             if (worldCol == gp.maxWorldCol) {

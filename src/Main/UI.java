@@ -59,6 +59,10 @@ public class UI {
             drawPlayerLife();
             drawInventory();
         }
+        if (gp.gameState == gp.gameOverState) {
+            drawPlayerLife();
+            drawGameOver();
+        }
     }
     public void drawPlayerLife() {
         int x = gp.tileSize / 2;
@@ -139,6 +143,11 @@ public class UI {
         g2.setColor(c);
         g2.fillRoundRect(x, y, width, height,0, 0);
     }
+    public void drawSubWindowForGameOverState2(int x, int y, int width, int height) {
+        Color c = new Color(0, 0, 0, 230);
+        g2.setColor(c);
+        g2.fillRoundRect(x, y, width, height,0, 0);
+    }
     public void drawSubWindowForInventoryState(int x, int y, int width, int height) {
         Color fillColor = new Color(0, 0, 0);
 //        Color borderColor = new Color(90, 90, 90);
@@ -170,7 +179,7 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
         String title = "Ender Lilies";
         int x = getXForCenterText(title);
-        int y = gp.tileSize * 3;
+        int y = gp.tileSize * 3 - gp.tileSize/2;
 
         // Shadow of title
         g2.setColor(Color.GRAY);
@@ -181,8 +190,8 @@ public class UI {
         g2.drawString(title, x, y);
 
         // Create a gray rectangle behind the character
-        g2.setColor(Color.darkGray);
-        g2.fillRect(gp.screenWidth / 2 - (gp.tileSize * 2) / 2, gp.tileSize * 4, gp.tileSize * 2, gp.tileSize * 2);
+//        g2.setColor(Color.darkGray);
+//        g2.fillRect(gp.screenWidth / 2 - (gp.tileSize * 2) / 2, gp.tileSize * 3, gp.tileSize * 2, gp.tileSize * 2);
 
         // Player image
         x = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
@@ -196,19 +205,31 @@ public class UI {
         String text1 = "Play game";
         x = getXForCenterText(text1);
         y += gp.tileSize * 3 + (gp.tileSize / 2);
-        g2.drawString(text1, x, y);
         if (commandNum == 0) {
+            g2.setColor(new Color(240, 190, 90));
             g2.drawString(">", x - gp.tileSize, y);
         }
+        g2.drawString(text1, x, y);
 
-        String text2 = "Quit";
+        g2.setColor(Color.white);
+        String text2 = "Tutorial";
         x = getXForCenterText(text1);
         y += gp.tileSize;
-        g2.drawString(text2, x, y);
         if (commandNum == 1) {
+            g2.setColor(new Color(240, 190, 90));
             g2.drawString(">", x - gp.tileSize, y);
         }
+        g2.drawString(text2, x, y);
+        g2.setColor(Color.white);
+        String text3 = "Quit";
+        x = getXForCenterText(text1);
+        y += gp.tileSize;
         if (commandNum == 2) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text3, x, y);
+        if (commandNum == 3) {
             commandNum = 0;
         }
         if (commandNum == -1) {
@@ -255,7 +276,7 @@ public class UI {
         g2.setColor(Color.WHITE);
         g2.setFont(g2.getFont().deriveFont(30F));
         textY += lineHeight / 2;
-        g2.drawImage(gp.lilies.currentWeapon.down, textX + 24, textY, null);
+        g2.drawImage(gp.lilies.currentWeapon.downMove1, textX + 24, textY, null);
 
         textY = gp.tileSize * 2 + 52;
         String value;
@@ -297,7 +318,7 @@ public class UI {
         textX = getXForAlignToRightText(text, tailX);
         g2.drawString(text, textX, textY);
         textY += lineHeight / 2;
-        g2.drawImage(gp.lilies.currentShield.down, tailX - gp.tileSize - 12, textY, null);
+        g2.drawImage(gp.lilies.currentShield.downMove1, tailX - gp.tileSize - 12, textY, null);
 
         g2.setColor(Color.WHITE);
         g2.setFont(g2.getFont().deriveFont(Font.ITALIC,32F));
@@ -369,8 +390,41 @@ public class UI {
         g2.drawString("Press \"z\" to go back...", gp.tileSize * 13, gp.tileSize * 9 + gp.tileSize / 2);
     }
     public int getItemIndexOnSlot() {
-        int itemIndex = slotCol + (slotRow * 7);
-        return itemIndex;
+        return slotCol + (slotRow * 7);
+    }
+    public void drawGameOver() {
+        drawSubWindowForGameOverState2(0, 0, gp.tileSize * 18, gp.tileSize * 10);
+
+        int x;
+        int y;
+        String text = "Game Over";
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 110f));
+
+        g2.setColor(Color.gray);
+        x = getXForCenterText(text);
+        y = gp.tileSize * 4;
+        g2.drawString(text, x, y);
+        g2.setColor(Color.white);
+        g2.drawString(text, x- 4, y - 4);
+
+        g2.setFont(g2.getFont().deriveFont(50f));
+        text = "Retry";
+        x = getXForCenterText(text);
+        y += gp.tileSize * 2;
+        if (commandNum == 0) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
+        g2.setColor(Color.WHITE);
+        text = "Quit";
+        x = getXForCenterText(text);
+        y += gp.tileSize;
+        if (commandNum == 1) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
     }
     public int getXForCenterText(String text) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();

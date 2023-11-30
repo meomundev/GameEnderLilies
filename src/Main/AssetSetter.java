@@ -16,6 +16,7 @@ public class AssetSetter {
     }
 
     public void setObjects() {
+        int mapNum = 0;
         int i = 0;
         gp.object[i] = new Door(gp);
         gp.object[i].worldX = gp.tileSize * 11;
@@ -24,7 +25,7 @@ public class AssetSetter {
         gp.object[i] = new Key(gp);
         gp.object[i].worldX = gp.tileSize * 10;
         gp.object[i].worldY = gp.tileSize * 6;
-        gp.entityList.add(gp.object[i]);
+
         i++;
         gp.object[i] = new Shield2(gp);
         gp.object[i].worldX = gp.tileSize * 11;
@@ -33,9 +34,12 @@ public class AssetSetter {
         gp.object[i] = new Sword2(gp);
         gp.object[i].worldX = gp.tileSize * 12;
         gp.object[i].worldY = gp.tileSize * 6;
+
+        gp.entityList.add(gp.object[i]);
     }
 
     public void setNPC() {
+        int mapNum = 0;
         gp.npc[0] = new NPC(gp);
         gp.npc[0].worldX = gp.tileSize * 16;
         gp.npc[0].worldY = gp.tileSize * 21;
@@ -46,6 +50,7 @@ public class AssetSetter {
             System.out.println("The monster array is null.");
             return; // Dừng việc thực hiện tiếp nếu mảng là null.
         }
+        int mapNum = 0;
         int i = 0;
         gp.monster[i] = new BatMonster(gp);
         gp.monster[i].worldX = gp.tileSize * 11;

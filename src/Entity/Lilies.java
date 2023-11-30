@@ -181,6 +181,9 @@ public class Lilies extends Entity{
                 invincibleCounter = 0;
             }
         }
+        if (life <= 0) {
+            gp.gameState = gp.gameOverState;
+        }
     }
     public void attacking() {
         spriteCounter++;
@@ -264,15 +267,23 @@ public class Lilies extends Entity{
                 if (inventory.size() != inventorySize) {
                     inventory.add(gp.object[i]);
                     gp.object[i] = null;
+                    }
                 }
             }
         }
     }
-}
+    public void setDefaultPositions() {
+        worldX= gp.tileSize * (gp.maxScreenCol/2) + (gp.tileSize * 3); // 72*(18/2) = 648
+        worldY = gp.tileSize * (gp.maxScreenRow/2) + (gp.tileSize * 3) - 16; // 72*(10/2) = 360
+        direction = "down";
+    }
+    public void resetLife() {
+        life = maxLife;
+        invincible = false;
+    }
     public void setItem() {
         inventory.add(currentWeapon);
         inventory.add(currentShield);
-        inventory.add(new Key(gp));
     }
     public void contactMonster(int i) {
         if (i != 999) {

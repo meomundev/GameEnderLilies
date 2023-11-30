@@ -38,10 +38,16 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.inventoryState) {
             inventoryState(code);
         }
+        else if (gp.gameState == gp.gameOverState) {
+            gameOverState(code);
+        }
     }
     public void titleState(int code) {
         if(code == KeyEvent.VK_UP) {
             gp.ui.commandNum--;
+            if (gp.ui.commandNum == -1) {
+                gp.ui.commandNum = 2;
+            }
         }
         else if(code == KeyEvent.VK_DOWN) {
             gp.ui.commandNum++;
@@ -50,7 +56,7 @@ public class KeyHandler implements KeyListener {
             if (gp.ui.commandNum == 0) {
                 gp.gameState = gp.playState;
             }
-            if (gp.ui.commandNum == 1) {
+            if (gp.ui.commandNum == 2) {
                 System.exit(0);
             }
         }
@@ -108,6 +114,30 @@ public class KeyHandler implements KeyListener {
             }
         } else if (code == KeyEvent.VK_ENTER) {
             gp.lilies.selectItem();
+        }
+    }
+    public void gameOverState(int code) {
+        if (code == KeyEvent.VK_UP) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 1;
+            }
+        } else if (code == KeyEvent.VK_DOWN) {
+            gp.ui.commandNum++;
+            if (gp.ui.commandNum > 1) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNum == 0) {
+                gp.gameState = gp.playState;
+                gp.retry();
+            }
+            else if (gp.ui.commandNum == 1) {
+                gp.gameState = gp.titleState;
+                gp.restart();
+                gp.ui.commandNum = 0;
+            }
         }
     }
     @Override

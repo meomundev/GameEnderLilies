@@ -18,6 +18,8 @@ public class BugMonster extends Entity {
         maxLife = 5;
         life = maxLife;
         exp = 2;
+        attack = 2;
+        defense = 0;
 
         solidArea = new Rectangle();
         solidArea.x = gp.tileSize / 3;
