@@ -20,6 +20,7 @@ public class BugMonster extends Entity {
         exp = 2;
         attack = 2;
         defense = 0;
+        point = 1;
 
         solidArea = new Rectangle();
         solidArea.x = gp.tileSize / 3;

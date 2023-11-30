@@ -39,9 +39,9 @@ public class GamePanel extends JPanel implements Runnable{
     public AssetSetter aSetter = new AssetSetter(this);
 // entity
     public Lilies lilies = new Lilies(this, keyHandler);
-    public Entity[] object = new Entity[10];
-    public Entity[] npc = new Entity[10];
-    public Entity[] monster = new Entity[20];
+    public Entity[][] object = new Entity[maxMap][10];
+    public Entity[][] npc = new Entity[maxMap][10];
+    public Entity[][] monster = new Entity[maxMap][20];
     public ArrayList<Entity> projectileList = new ArrayList<>();
     public ArrayList<Entity> entityList = new ArrayList<>();
 // game state
@@ -52,6 +52,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int characterState = 3;
     public final int inventoryState = 4;
     public final int gameOverState = 6;
+    public final int pointState = 7;
 
     public GamePanel() {
         keyHandler.gp = this;
@@ -107,18 +108,18 @@ public class GamePanel extends JPanel implements Runnable{
     public void update() {
         if (gameState == playState) {
 // update npc
-            for (Entity entity : npc) {
-                if (entity != null) {
-                    entity.update();
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    npc[currentMap][i].update();
                 }
             }
 // update lilies
             lilies.update();
 // update quai vat
-            for (Entity entity : monster) {
-                if (entity != null) {
-                    if (entity.alive) {
-                        entity.update();
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    if (monster[currentMap][i].alive) {
+                        monster[currentMap][i].update();
                     }
                 }
             }
@@ -142,22 +143,25 @@ public class GamePanel extends JPanel implements Runnable{
         if (gameState == titleState) {
             ui.draw(g2);
         }
+        else if (gameState == pointState) {
+            ui.draw(g2);
+        }
         else if (gameState == playState) {  // Đảm bảo rằng game ở trạng thái playState
             tileManager.draw(g2);
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) {
-                    entityList.add(npc[i]);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
                 }
             }
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) {
-                    entityList.add(monster[i]);
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
                 }
             }
             if (this.object != null) {
-                for (int i = 0; i < object.length; i++) {
-                    if (object[i] != null) {
-                        entityList.add(object[i]);
+                for (int i = 0; i < object[1].length; i++) {
+                    if (object[currentMap][i] != null) {
+                        entityList.add(object[currentMap][i]);
                     }
                 }
             }
@@ -190,19 +194,19 @@ public class GamePanel extends JPanel implements Runnable{
         }
         else if (gameState == dialogueState) {
             tileManager.draw(g2);
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) {
-                    entityList.add(npc[i]);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
                 }
             }
-            for (int i = 0; i < object.length; i++) {
-                if (object[i] != null) {
-                    entityList.add(object[i]);
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
                 }
             }
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) {
-                    entityList.add(monster[i]);
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
                 }
             }
             for (Entity entity : entityList) {
@@ -215,19 +219,19 @@ public class GamePanel extends JPanel implements Runnable{
         }
         else if (gameState == characterState) {
             tileManager.draw(g2);
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) {
-                    entityList.add(npc[i]);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
                 }
             }
-            for (int i = 0; i < object.length; i++) {
-                if (object[i] != null) {
-                    entityList.add(object[i]);
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
                 }
             }
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) {
-                    entityList.add(monster[i]);
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
                 }
             }
             for (Entity entity : entityList) {
@@ -240,19 +244,19 @@ public class GamePanel extends JPanel implements Runnable{
         }
         else if (gameState == inventoryState) {
             tileManager.draw(g2);
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) {
-                    entityList.add(npc[i]);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
                 }
             }
-            for (int i = 0; i < object.length; i++) {
-                if (object[i] != null) {
-                    entityList.add(object[i]);
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
                 }
             }
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) {
-                    entityList.add(monster[i]);
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
                 }
             }
             for (Entity entity : entityList) {
@@ -265,19 +269,19 @@ public class GamePanel extends JPanel implements Runnable{
         }
         else if (gameState == gameOverState) {
             tileManager.draw(g2);
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) {
-                    entityList.add(npc[i]);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
                 }
             }
-            for (int i = 0; i < object.length; i++) {
-                if (object[i] != null) {
-                    entityList.add(object[i]);
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
                 }
             }
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) {
-                    entityList.add(monster[i]);
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
                 }
             }
             for (Entity entity : entityList) {

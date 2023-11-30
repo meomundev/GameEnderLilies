@@ -47,6 +47,10 @@ public class UI {
             drawPlayerLife();
             drawMessage();
         }
+// Point state
+        if (gp.gameState == gp.pointState) {
+            drawPointState();
+        }
 // Dialogue state
         if (gp.gameState == gp.dialogueState) {
             drawPlayerLife();
@@ -111,6 +115,27 @@ public class UI {
                 }
             }
         }
+    }
+    public void drawPointState() {
+        final int frameX = 0;
+        final int frameY = 0;
+        final int frameWidth = gp.tileSize * 5;
+        final int frameHeight = gp.tileSize * 10;
+        int tailX = (frameX + frameWidth) - 26;
+        drawSubWindowForCharacterState2(0, 0, gp.tileSize * 18, gp.tileSize * 10);
+        drawSubWindowForCharacterState(frameX, frameY, frameWidth, frameHeight);
+
+        g2.setColor(Color.YELLOW);
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD,50F));
+        int textX = frameX + 26;
+        int textY = gp.tileSize * 2 + 52;
+        final int lineHeight = 46;
+
+        g2.drawString("Point", gp.tileSize + 12, gp.tileSize + lineHeight);
+        String value;
+        value = String.valueOf(gp.lilies.point);
+        textX = getXForAlignToRightText(value, tailX);
+        g2.drawString(value, textX, textY);
     }
     public void drawDialogueScreen() {
         int x = gp.tileSize * 2;
@@ -212,7 +237,7 @@ public class UI {
         g2.drawString(text1, x, y);
 
         g2.setColor(Color.white);
-        String text2 = "Tutorial";
+        String text2 = "Point";
         x = getXForCenterText(text1);
         y += gp.tileSize;
         if (commandNum == 1) {

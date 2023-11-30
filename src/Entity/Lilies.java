@@ -55,6 +55,8 @@ public class Lilies extends Entity{
         coin = 0;
         maxLife = 2;
         life = maxLife;
+        point = 0;
+
         projectile = new FireBallBlue(gp);
         currentWeapon = new Sword(gp);
         currentShield = new Shield(gp);
@@ -237,18 +239,24 @@ public class Lilies extends Entity{
     public void interactNPC(int i) {
         if (i != 999) {
             gp.gameState = gp.dialogueState;
-            gp.npc[i].speak();
+            gp.npc[gp.currentMap][i].speak();
+        }
+    }
+    public void interact(int i) {
+        if (i != 999) {
+            gp.gameState = gp.dialogueState;
+            gp.npc[gp.currentMap][i].speak();
         }
     }
     public void pickUpObject(int i) {
         if (i != 999) {
-        String objectName = gp.object[i].name;
+        String objectName = gp.object[gp.currentMap][i].name;
         switch (objectName) {
             case "Key" -> {
                 hasKey++;
                 if (inventory.size() != inventorySize) {
-                    inventory.add(gp.object[i]);
-                    gp.object[i] = null;
+                    inventory.add(gp.object[gp.currentMap][i]);
+                    gp.object[gp.currentMap][i] = null;
                 }
             }
             case "Door" -> {
@@ -259,14 +267,14 @@ public class Lilies extends Entity{
                             break;
                         }
                     }
-                    gp.object[i] = null;
+                    gp.object[gp.currentMap][i] = null;
                     hasKey--;
                 }
             }
             case "Steel Shield", "Ice Sword" -> {
                 if (inventory.size() != inventorySize) {
-                    inventory.add(gp.object[i]);
-                    gp.object[i] = null;
+                    inventory.add(gp.object[gp.currentMap][i]);
+                    gp.object[gp.currentMap][i] = null;
                     }
                 }
             }
@@ -288,7 +296,7 @@ public class Lilies extends Entity{
     public void contactMonster(int i) {
         if (i != 999) {
             if (!invincible) {
-                int damage = gp.monster[i].attack - defense;
+                int damage = gp.monster[gp.currentMap][i].attack - defense;
                 if (damage <= 0) {
                     damage = 1;
                 }
@@ -299,20 +307,21 @@ public class Lilies extends Entity{
     }
     public void damageMonster(int i) {
         if (i != 999) {
-            if (!gp.monster[i].invincible && gp.monster[i] != null) {
-                int damage = attack - gp.monster[i].defense;
+            if (!gp.monster[gp.currentMap][i].invincible && gp.monster[gp.currentMap][i] != null) {
+                int damage = attack - gp.monster[gp.currentMap][i].defense;
                 if (damage <= 0) {
                     damage = 0;
                 }
-                gp.monster[i].life -= damage;
-                gp.monster[i].invincible = true;
-                gp.monster[i].damageReaction();
-                if (gp.monster[i].life <= 0) {
-                    gp.monster[i].dying = true;
-                    gp.ui.addMessage("Kill " + gp.monster[i].name + "!");
-                    exp += gp.monster[i].exp;
-                    gp.ui.addMessage("Exp + " + gp.monster[i].exp);
-                    gp.monster[i] = null;
+                gp.monster[gp.currentMap][i].life -= damage;
+                gp.monster[gp.currentMap][i].invincible = true;
+                gp.monster[gp.currentMap][i].damageReaction();
+                if (gp.monster[gp.currentMap][i].life <= 0) {
+                    gp.monster[gp.currentMap][i].dying = true;
+                    gp.ui.addMessage("Kill " + gp.monster[gp.currentMap][i].name + "!");
+                    exp += gp.monster[gp.currentMap][i].exp;
+                    point += gp.monster[gp.currentMap][i].point;
+                    gp.ui.addMessage("Exp + " + gp.monster[gp.currentMap][i].exp);
+                    gp.monster[gp.currentMap][i] = null;
                     checkLevelUp();
                     checkHeal();
                     resetMonster();

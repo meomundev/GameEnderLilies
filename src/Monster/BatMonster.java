@@ -21,6 +21,7 @@ public class BatMonster extends Entity {
         attack = 2;
         defense = 0;
         exp = 2;
+        point = 1;
         projectile = new ProjectileDemon(gp);
 
         solidArea = new Rectangle();

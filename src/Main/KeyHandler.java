@@ -56,6 +56,9 @@ public class KeyHandler implements KeyListener {
             if (gp.ui.commandNum == 0) {
                 gp.gameState = gp.playState;
             }
+            if (gp.ui.commandNum == 1) {
+                gp.gameState = gp.pointState;
+            }
             if (gp.ui.commandNum == 2) {
                 System.exit(0);
             }
@@ -79,6 +82,11 @@ public class KeyHandler implements KeyListener {
                 gp.gameState = gp.characterState;
             } else if (code == KeyEvent.VK_I) {
                 gp.gameState = gp.inventoryState;
+            } else if (code == KeyEvent.VK_R) {
+                switch (gp.currentMap) {
+                    case 0: gp.tileManager.loadMap("/map/mapTest.txt", 0);
+                    case 1: gp.tileManager.loadMap("/map/map2.txt", 1);
+                }
             }
         }
     }
