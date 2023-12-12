@@ -23,6 +23,7 @@ public class Projectile extends Entity{
                 alive = false;
             }
         }
+        //contact to monster
         if (user != gp.lilies) {
             boolean contactPlayer = gp.collisionCheck.checkPlayer(this);
             if (!gp.lilies.invincible && contactPlayer) {

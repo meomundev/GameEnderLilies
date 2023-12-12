@@ -1,4 +1,4 @@
-package Objects;
+package objects;
 
 import Entity.Projectile;
 import Main.GamePanel;
@@ -11,7 +11,7 @@ public class ProjectileDemon extends Projectile {
 
         name = "Projectile Bat";
         speed = 10;
-        attack = 2;
+        attack = 3;
         maxLife = 60;
         life = maxLife;
         useCost = 1;

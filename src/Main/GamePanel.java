@@ -2,7 +2,7 @@ package Main;
 
 import Entity.Entity;
 import Entity.Lilies;
-import Tiles.TileManager;
+import tiles.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable{
     public AssetSetter aSetter = new AssetSetter(this);
 // entity
     public Lilies lilies = new Lilies(this, keyHandler);
-    public Entity[][] object = new Entity[maxMap][10];
+    public Entity[][] object = new Entity[maxMap][20];
     public Entity[][] npc = new Entity[maxMap][10];
     public Entity[][] monster = new Entity[maxMap][20];
     public ArrayList<Entity> projectileList = new ArrayList<>();
@@ -53,6 +53,10 @@ public class GamePanel extends JPanel implements Runnable{
     public final int inventoryState = 4;
     public final int gameOverState = 6;
     public final int pointState = 7;
+    public final int dialogueStateNextMap = 8;
+    public final int gameWin = 9;
+    public final int gameMenu = 10;
+    public final int gameTutorial = 11;
 
     public GamePanel() {
         keyHandler.gp = this;
@@ -65,16 +69,24 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void retry() {
         lilies.setDefaultPositions();
-        lilies.resetLife();
-        aSetter.setMonster();
-        aSetter.setNPC();
+        if (currentMap == 0) {
+            lilies.setDefaultValues();
+            aSetter.setMonster();
+            aSetter.setNPC();
+        } else if (currentMap == 1) {
+            lilies.resetMonsterIsDeadMap2();
+            lilies.setDefaultValuesNextMap();
+            aSetter.setMonster();
+        }
     }
     public void restart() {
+        currentMap = 0;
+        lilies.setDefaultValues();
         lilies.setDefaultPositions();
         lilies.resetLife();
+        lilies.resetMonsterIsDeadMap1();
         aSetter.setMonster();
         aSetter.setNPC();
-        aSetter.setObjects();
     }
     public void setUpGame () {
         aSetter.setNPC();
@@ -85,10 +97,9 @@ public class GamePanel extends JPanel implements Runnable{
         gameThread = new Thread(this);
         gameThread.start(); //bat dau thuc thi ma trong phuong thuc run
     }
-
     @Override
     public void run() {
-        double drawInterval = (double) 1000000000 /FPS; //khoang thoi gian giua cac khung hinh 0.016666s(1000000000 nano giay = 1 giay)
+        double drawInterval = (double) 1000000000 / FPS; //khoang thoi gian giua cac khung hinh 0.016666s(1000000000 nano giay = 1 giay)
         double delta = 0; //thoi gian con lai truoc khi cap nhat khung hinh tiep theo
         long lastTime = System.nanoTime();
         long currentTime;
@@ -104,7 +115,6 @@ public class GamePanel extends JPanel implements Runnable{
             lastTime = currentTime;
         }
     }
-
     public void update() {
         if (gameState == playState) {
 // update npc
@@ -134,7 +144,6 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
     }
-
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -146,7 +155,7 @@ public class GamePanel extends JPanel implements Runnable{
         else if (gameState == pointState) {
             ui.draw(g2);
         }
-        else if (gameState == playState) {  // Đảm bảo rằng game ở trạng thái playState
+        else if (gameState == playState) {
             tileManager.draw(g2);
             for (int i = 0; i < npc[1].length; i++) {
                 if (npc[currentMap][i] != null) {
@@ -174,25 +183,59 @@ public class GamePanel extends JPanel implements Runnable{
             entityList.sort(new Comparator<Entity>() {
                 @Override
                 public int compare(Entity o1, Entity o2) {
+                    if (o1 == null && o2 == null) {
+                        return 0;
+                    } else if (o1 == null) {
+                        return 1;
+                    } else if (o2 == null) {
+                        return -1;
+                    }
+
                     if (o1.worldX < o2.worldX) {
                         return -1;
                     } else if (o1.worldX > o2.worldX) {
                         return 1;
                     } else {
-                        // Nếu giá trị x không bằng nhau, so sánh dựa trên giá trị y
                         return Integer.compare(o1.worldY, o2.worldY);
                     }
                 }
             });
 
             for (Entity entity : entityList) {
-                entity.draw(g2);
+                if (entity != null) {
+                    entity.draw(g2);
+                }
             }
             entityList.clear();
             lilies.draw(g2);
             ui.draw(g2);
         }
         else if (gameState == dialogueState) {
+            tileManager.draw(g2);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == dialogueStateNextMap) {
             tileManager.draw(g2);
             for (int i = 0; i < npc[1].length; i++) {
                 if (npc[currentMap][i] != null) {
@@ -268,6 +311,81 @@ public class GamePanel extends JPanel implements Runnable{
             ui.draw(g2);
         }
         else if (gameState == gameOverState) {
+            tileManager.draw(g2);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == gameWin) {
+            tileManager.draw(g2);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == gameMenu) {
+            tileManager.draw(g2);
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    entityList.add(npc[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < object[1].length; i++) {
+                if (object[currentMap][i] != null) {
+                    entityList.add(object[currentMap][i]);
+                }
+            }
+            for (int i = 0; i < monster[1].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    entityList.add(monster[currentMap][i]);
+                }
+            }
+            for (Entity entity : entityList) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+            }
+            lilies.draw(g2);
+            ui.draw(g2);
+        }
+        else if (gameState == gameTutorial) {
             tileManager.draw(g2);
             for (int i = 0; i < npc[1].length; i++) {
                 if (npc[currentMap][i] != null) {

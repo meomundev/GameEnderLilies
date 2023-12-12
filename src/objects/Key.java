@@ -1,4 +1,4 @@
-package Objects;
+package objects;
 
 import Entity.Entity;
 import Main.GamePanel;
@@ -8,7 +8,7 @@ public class Key extends Entity {
         super(gp);
 
         name = "Key";
-        downMove1 = setup("/objects/key", gp.tileSize, gp.tileSize);
+        downMove1 = setup("/objectsRes/key", gp.tileSize, gp.tileSize);
         description = "[" + name + "]\nKey";
     }
 }

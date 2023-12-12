@@ -1,4 +1,4 @@
-package Objects;
+package objects;
 
 import Entity.Entity;
 import Main.GamePanel;
@@ -9,7 +9,7 @@ public class Shield extends Entity {
 
         type = typeShield;
         name = "Wooden Shield";
-        downMove1 = setup("/objects/shield", gp.tileSize, gp.tileSize);
+        downMove1 = setup("/objectsRes/shield", gp.tileSize, gp.tileSize);
         defenseValue = 1;
         description = "[" + name + "]\nDefense: 1";
     }

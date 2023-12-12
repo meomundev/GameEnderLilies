@@ -25,8 +25,8 @@ public class NPC extends Entity{
     public void setDialogue() {
         dialogue[0] = "Hello, Little Knight!!\nWelcome to the Land Of The Dreams.";
         dialogue[1] = "I am Elder Bug";
-        dialogue[2] = "This Island will make you happy";
-        dialogue[3] = "Are you happy?";
+        dialogue[2] = "This Island is need you!!";
+        dialogue[3] = "Please kill all monster";
     }
     public void speak() {
         super.speak();

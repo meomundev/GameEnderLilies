@@ -1,21 +1,29 @@
 package Main;
 
-import javax.swing.*;
+import Main.User.LogIn;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import javax.swing.*;
+import java.sql.Connection;
+
 public class Main {
     public static void main(String[] args) {
-        JFrame window = new JFrame();
-        GamePanel gamePanel = new GamePanel();
-        gamePanel.setUpGame();
-        gamePanel.startGameThread();
+        Connection connection = MyConnection.getConnection();
 
-        window.add(gamePanel);
-        window.setTitle("Ender Lilies"); //dat ten cho tro choi
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //tat window khi nhan X
-        window.setResizable(false); //khong cho chinh sua kich thuoc window
-        window.setVisible(true); //dung de hien thi window
-        window.pack(); //hien thi window vua du
+        if (connection != null) {
+            LogIn logIn = new LogIn(null);
+            if (logIn.loginSuccessful()) {
+                JFrame window = new JFrame();
+                GamePanel gamePanel = new GamePanel();
+                gamePanel.setUpGame();
+                gamePanel.startGameThread();
+
+                window.add(gamePanel);
+                window.setTitle("Ender Lilies"); // dat ten cho tro choi
+                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // tat window khi nhan X
+                window.setResizable(false); // khong cho chinh sua kich thuoc window
+                window.setVisible(true); // dung de hien thi window
+                window.pack(); // hien thi window vua du
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 package Main;
 
 import Entity.Entity;
-import Objects.Heart;
+import objects.Heart;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -46,6 +46,7 @@ public class UI {
         if (gp.gameState == gp.playState) {
             drawPlayerLife();
             drawMessage();
+//            drawMonsterRemaining();
         }
 // Point state
         if (gp.gameState == gp.pointState) {
@@ -55,6 +56,10 @@ public class UI {
         if (gp.gameState == gp.dialogueState) {
             drawPlayerLife();
             drawDialogueScreen();
+        }
+        if (gp.gameState == gp.dialogueStateNextMap) {
+            drawPlayerLife();
+            drawDialogueScreenNextMap();
         }
         if (gp.gameState == gp.characterState) {
             drawCharacterScreen();
@@ -67,7 +72,25 @@ public class UI {
             drawPlayerLife();
             drawGameOver();
         }
+        if (gp.gameState == gp.gameWin) {
+            drawGameWin();
+        }
+        if (gp.gameState == gp.gameMenu) {
+            drawGameMenu();
+        }
+        if (gp.gameState == gp.gameTutorial) {
+            drawGameTutorial();
+        }
     }
+//    public void drawMonsterRemaining() {
+//        int x = gp.tileSize / 2;
+//        int y = gp.tileSize * 10;
+//        int ha = gp.
+//
+//        String value;
+//        value = String.valueOf(gp.lilies.all);
+//        g2.drawString(value, x, y);
+//    }
     public void drawPlayerLife() {
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;
@@ -153,6 +176,37 @@ public class UI {
             y += gp.tileSize;
         }
     }
+    public void drawDialogueScreenNextMap() {
+        int x = gp.tileSize * 2;
+        int y = gp.tileSize / 2;
+        int width = gp.screenWidth - (gp.tileSize * 4);
+        int height = gp.tileSize * 4;
+        drawSubWindow(x, y, width, height);
+
+        g2.setColor(Color.white);
+        g2.setFont(arial_40);
+        x += gp.tileSize;
+        y += gp.tileSize;
+        String line = "You want go next map?";
+        g2.drawString(line, x, y);
+        y += gp.tileSize;
+        x += gp.tileSize;
+        String text1 = "Yes";
+        if (commandNum == 0) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize / 2, y);
+        }
+        g2.drawString(text1, x, y);
+
+        x += gp.tileSize * 2;
+        g2.setColor(Color.white);
+        String text2 = "No";
+        if (commandNum == 1) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize / 2, y);
+        }
+        g2.drawString(text2, x, y);
+    }
     public void drawSubWindow(int x, int y, int width, int height) {
         Color c = new Color(0, 0, 0, 200);
         g2.setColor(c);
@@ -175,14 +229,8 @@ public class UI {
     }
     public void drawSubWindowForInventoryState(int x, int y, int width, int height) {
         Color fillColor = new Color(0, 0, 0);
-//        Color borderColor = new Color(90, 90, 90);
-
         g2.setColor(fillColor);
         g2.fillRoundRect(x, y, width, height, 20, 20);
-
-//        g2.setColor(borderColor);
-//        g2.setStroke(new BasicStroke(4));
-//        g2.drawRoundRect(x, y, width, height, 0, 0);
     }
     public void drawSubWindowForInventoryState2(int x, int y, int width, int height) {
         Color fillColor = new Color(30, 30, 30);
@@ -214,10 +262,6 @@ public class UI {
         g2.setColor(Color.WHITE);
         g2.drawString(title, x, y);
 
-        // Create a gray rectangle behind the character
-//        g2.setColor(Color.darkGray);
-//        g2.fillRect(gp.screenWidth / 2 - (gp.tileSize * 2) / 2, gp.tileSize * 3, gp.tileSize * 2, gp.tileSize * 2);
-
         // Player image
         x = gp.screenWidth / 2 - (gp.tileSize * 2) / 2;
         y += gp.tileSize;
@@ -237,28 +281,19 @@ public class UI {
         g2.drawString(text1, x, y);
 
         g2.setColor(Color.white);
-        String text2 = "Point";
+        String text3 = "Quit";
         x = getXForCenterText(text1);
         y += gp.tileSize;
         if (commandNum == 1) {
             g2.setColor(new Color(240, 190, 90));
             g2.drawString(">", x - gp.tileSize, y);
         }
-        g2.drawString(text2, x, y);
-        g2.setColor(Color.white);
-        String text3 = "Quit";
-        x = getXForCenterText(text1);
-        y += gp.tileSize;
-        if (commandNum == 2) {
-            g2.setColor(new Color(240, 190, 90));
-            g2.drawString(">", x - gp.tileSize, y);
-        }
         g2.drawString(text3, x, y);
-        if (commandNum == 3) {
+        if (commandNum == 2) {
             commandNum = 0;
         }
         if (commandNum == -1) {
-            commandNum = 1;
+            commandNum = 0;
         }
     }
     public void drawCharacterScreen() {
@@ -358,6 +393,7 @@ public class UI {
         drawSubWindowForInventoryState(frameX1, frameY1, frameWidth1, frameHeight1);
         drawSubWindowForInventoryState2(frameX1 + gp.tileSize / 2, frameY1 + gp.tileSize * 2, frameWidth1 - gp.tileSize + 5, frameHeight1 - gp.tileSize * 3 + gp.tileSize / 2 + 5);
 
+
 // title
         g2.setColor(Color.YELLOW);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD,50F));
@@ -450,6 +486,111 @@ public class UI {
             g2.drawString(">", x - gp.tileSize, y);
         }
         g2.drawString(text, x, y);
+    }
+    public void drawGameWin() {
+        drawSubWindowForGameOverState2(0, 0, gp.tileSize * 18, gp.tileSize * 10);
+
+        int x;
+        int y;
+        String text = "Congratulation!";
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 110f));
+
+        g2.setColor(Color.gray);
+        x = getXForCenterText(text);
+        y = gp.tileSize * 4;
+        g2.drawString(text, x, y);
+        g2.setColor(Color.white);
+        g2.drawString(text, x- 4, y - 4);
+
+        g2.setFont(g2.getFont().deriveFont(50f));
+        text = "Play Again";
+        x = getXForCenterText(text);
+        y += gp.tileSize * 2;
+        if (commandNum == 0) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
+        g2.setColor(Color.WHITE);
+        text = "Quit";
+        x = getXForCenterText(text);
+        y += gp.tileSize;
+        if (commandNum == 1) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
+    }
+    public void drawGameMenu() {
+        drawSubWindowForGameOverState2(0, 0, gp.tileSize * 18, gp.tileSize * 10);
+
+        int x;
+        int y = gp.tileSize * 2 + gp.tileSize / 2;
+
+        g2.setColor(Color.WHITE);
+        g2.setFont(g2.getFont().deriveFont(50f));
+        String text = "Resume";
+        x = getXForCenterText(text);
+        y += gp.tileSize * 2;
+        if (commandNum == 0) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
+        g2.setColor(Color.WHITE);
+        text = "Tutorial";
+        x = getXForCenterText(text);
+        y += gp.tileSize;
+        if (commandNum == 1) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
+        g2.setColor(Color.WHITE);
+        text = "Back To Menu";
+        x = getXForCenterText(text);
+        y += gp.tileSize;
+        if (commandNum == 2) {
+            g2.setColor(new Color(240, 190, 90));
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+        g2.drawString(text, x, y);
+    }
+    public void drawGameTutorial() {
+        drawSubWindowForGameOverState2(0, 0, gp.tileSize * 18, gp.tileSize * 10);
+
+        int x;
+        int y = gp.tileSize * 3 + gp.tileSize / 2;
+
+        g2.setColor(Color.WHITE);
+        g2.setFont(g2.getFont().deriveFont(50f));
+
+        String text = "Press \"x\" to attack melee";
+        x = getXForCenterText(text);
+        g2.drawString(text, x, y);
+
+        y += gp.tileSize;
+        text = "Press \"c\" to attack ranger";
+        x = getXForCenterText(text);
+        g2.drawString(text, x, y);
+
+        y += gp.tileSize;
+        text = "Press \"a\" to open status";
+        x = getXForCenterText(text);
+        g2.drawString(text, x, y);
+
+        y += gp.tileSize;
+        text = "Press \"i\" to open inventory";
+        x = getXForCenterText(text);
+        g2.drawString(text, x, y);
+
+        y += gp.tileSize;
+        text = "Monster is dead:";
+        x = getXForCenterText(text);
+        g2.drawString(text, x, y);
+
+        g2.setFont(g2.getFont().deriveFont(Font.ITALIC,32F));
+        g2.drawString("Press \"z\" to go back...", gp.tileSize * 13, gp.tileSize * 9 + gp.tileSize / 2);
     }
     public int getXForCenterText(String text) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();

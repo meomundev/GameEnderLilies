@@ -32,6 +32,9 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.dialogueState) {
             dialogueState(code);
         }
+        else if (gp.gameState == gp.dialogueStateNextMap) {
+            dialogueStateNextMap(code);
+        }
         else if (gp.gameState == gp.characterState) {
             characterState(code);
         }
@@ -41,12 +44,21 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.gameOverState) {
             gameOverState(code);
         }
+        else if (gp.gameState == gp.gameWin) {
+            gameWinState(code);
+        }
+        else if (gp.gameState == gp.gameMenu) {
+            gameMenu(code);
+        }
+        else if (gp.gameState == gp.gameTutorial) {
+            gameTutorial(code);
+        }
     }
     public void titleState(int code) {
         if(code == KeyEvent.VK_UP) {
             gp.ui.commandNum--;
             if (gp.ui.commandNum == -1) {
-                gp.ui.commandNum = 2;
+                gp.ui.commandNum = 1;
             }
         }
         else if(code == KeyEvent.VK_DOWN) {
@@ -57,9 +69,6 @@ public class KeyHandler implements KeyListener {
                 gp.gameState = gp.playState;
             }
             if (gp.ui.commandNum == 1) {
-                gp.gameState = gp.pointState;
-            }
-            if (gp.ui.commandNum == 2) {
                 System.exit(0);
             }
         }
@@ -82,17 +91,29 @@ public class KeyHandler implements KeyListener {
                 gp.gameState = gp.characterState;
             } else if (code == KeyEvent.VK_I) {
                 gp.gameState = gp.inventoryState;
-            } else if (code == KeyEvent.VK_R) {
-                switch (gp.currentMap) {
-                    case 0: gp.tileManager.loadMap("/map/mapTest.txt", 0);
-                    case 1: gp.tileManager.loadMap("/map/map2.txt", 1);
-                }
+            } else if (code == KeyEvent.VK_ESCAPE) {
+                gp.gameState = gp.gameMenu;
             }
         }
     }
     public void dialogueState(int code) {
         if (code == KeyEvent.VK_Z || code == KeyEvent.VK_SPACE) {
             gp.gameState = gp.playState;
+        }
+    }
+    public void dialogueStateNextMap(int code) {
+        if (code == KeyEvent.VK_RIGHT) {
+            gp.ui.commandNum = 1;
+        } else if (code == KeyEvent.VK_LEFT) {
+            gp.ui.commandNum = 0;
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNum == 0) {
+                gp.gameState = gp.playState;
+                gp.lilies.nextMap();
+            } else if (gp.ui.commandNum == 1) {
+                gp.gameState = gp.playState;
+            }
         }
     }
     public void characterState(int code) {
@@ -146,6 +167,58 @@ public class KeyHandler implements KeyListener {
                 gp.restart();
                 gp.ui.commandNum = 0;
             }
+        }
+    }
+    public void gameWinState(int code) {
+        if (code == KeyEvent.VK_UP) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 1;
+            }
+        } else if (code == KeyEvent.VK_DOWN) {
+            gp.ui.commandNum++;
+            if (gp.ui.commandNum > 1) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNum == 0) {
+                gp.gameState = gp.playState;
+                gp.restart();
+            }
+            else if (gp.ui.commandNum == 1) {
+                gp.gameState = gp.titleState;
+                gp.restart();
+                gp.ui.commandNum = 0;
+            }
+        }
+    }
+    public void gameMenu(int code) {
+        if (code == KeyEvent.VK_UP) {
+            gp.ui.commandNum--;
+            if (gp.ui.commandNum < 0) {
+                gp.ui.commandNum = 2;
+            }
+        } else if (code == KeyEvent.VK_DOWN) {
+            gp.ui.commandNum++;
+            if (gp.ui.commandNum > 2) {
+                gp.ui.commandNum = 0;
+            }
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNum == 0) {
+                gp.gameState = gp.playState;
+            } else if (gp.ui.commandNum == 1) {
+                gp.gameState = gp.gameTutorial;
+            } else if (gp.ui.commandNum == 2) {
+                gp.gameState = gp.titleState;
+                gp.restart();
+            }
+        }
+    }
+    public void gameTutorial(int code) {
+        if (code == KeyEvent.VK_Z) {
+            gp.gameState = gp.gameMenu;
         }
     }
     @Override

@@ -1,4 +1,4 @@
-package Objects;
+package objects;
 
 import Entity.Entity;
 import Main.GamePanel;
@@ -9,7 +9,7 @@ public class Sword2 extends Entity {
 
         type = typeSword;
         name = "Ice Sword";
-        downMove1 = setup("/objects/sword2", gp.tileSize, gp.tileSize);
+        downMove1 = setup("/objectsRes/sword2", gp.tileSize, gp.tileSize);
         attackValue = 2;
         description = "[" + name + "]\nAttack: 2";
     }

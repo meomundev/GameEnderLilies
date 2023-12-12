@@ -2,15 +2,13 @@ package Entity;
 
 import Main.GamePanel;
 import Main.KeyHandler;
-import Objects.FireBallBlue;
-import Objects.Key;
-import Objects.Shield;
-import Objects.Sword;
+import objects.FireBallBlue;
+import objects.Shield;
+import objects.Sword;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Lilies extends Entity{
     KeyHandler kh;
@@ -19,6 +17,7 @@ public class Lilies extends Entity{
     int hasKey = 0;
     int heal = 0;
     int monsterIsDead = 0;
+    int allMonster = 18;
     public int standCounter = 0;
     public ArrayList<Entity> inventory = new ArrayList<>();
     public final int inventorySize = 27;
@@ -44,7 +43,7 @@ public class Lilies extends Entity{
     public void setDefaultValues() {
         worldX= gp.tileSize * (gp.maxScreenCol/2) + (gp.tileSize * 3); // 72*(18/2) = 648
         worldY = gp.tileSize * (gp.maxScreenRow/2) + (gp.tileSize * 3) - 16; // 72*(10/2) = 360
-        speed = 8;
+        speed = 6;
         direction = "down";
 // player status
         level = 1;
@@ -53,7 +52,29 @@ public class Lilies extends Entity{
         exp = 0;
         nextLevelExp = 5;
         coin = 0;
-        maxLife = 2;
+        maxLife = 4;
+        life = maxLife;
+        point = 0;
+
+        projectile = new FireBallBlue(gp);
+        currentWeapon = new Sword(gp);
+        currentShield = new Shield(gp);
+        attack = getAttack();
+        defense = getDefense();
+    }
+    public void setDefaultValuesNextMap() {
+        worldX = gp.tileSize * (gp.maxScreenCol/2) + (gp.tileSize * 3) - gp.tileSize * 3; // 72*(18/2) = 648
+        worldY = gp.tileSize * (gp.maxScreenRow/2) + (gp.tileSize * 3) - 16 + gp.tileSize * 5; // 72*(10/2) = 360
+        speed = 6;
+        direction = "down";
+// player status
+        level = 3;
+        strength = 2;
+        dexterity = 2;
+        exp = 16;
+        nextLevelExp = 20;
+        coin = 0;
+        maxLife = 8;
         life = maxLife;
         point = 0;
 
@@ -240,41 +261,38 @@ public class Lilies extends Entity{
         if (i != 999) {
             gp.gameState = gp.dialogueState;
             gp.npc[gp.currentMap][i].speak();
-        }
-    }
-    public void interact(int i) {
-        if (i != 999) {
-            gp.gameState = gp.dialogueState;
-            gp.npc[gp.currentMap][i].speak();
+            if (monsterIsDead == 8) {
+                gp.gameState = gp.dialogueStateNextMap;
+            }
         }
     }
     public void pickUpObject(int i) {
         if (i != 999) {
-        String objectName = gp.object[gp.currentMap][i].name;
-        switch (objectName) {
-            case "Key" -> {
-                hasKey++;
-                if (inventory.size() != inventorySize) {
+            String objectName = gp.object[gp.currentMap][i].name;
+            switch (objectName) {
+                case "Key" -> {
+                    hasKey++;
+                    if (inventory.size() != inventorySize) {
                     inventory.add(gp.object[gp.currentMap][i]);
                     gp.object[gp.currentMap][i] = null;
-                }
-            }
-            case "Door" -> {
-                if (hasKey > 0) {
-                    for (Entity object : inventory) {
-                        if (object != null && object.name.equals("Key")) {
-                            inventory.remove(object);
-                            break;
-                        }
                     }
-                    gp.object[gp.currentMap][i] = null;
-                    hasKey--;
                 }
-            }
-            case "Steel Shield", "Ice Sword" -> {
-                if (inventory.size() != inventorySize) {
-                    inventory.add(gp.object[gp.currentMap][i]);
-                    gp.object[gp.currentMap][i] = null;
+                case "Door" -> {
+                    if (hasKey > 0) {
+                        for (Entity object : inventory) {
+                            if (object != null && object.name.equals("Key")) {
+                                inventory.remove(object);
+                                break;
+                            }
+                        }
+                        gp.object[gp.currentMap][i] = null;
+                        hasKey--;
+                    }
+                }
+                case "Steel Shield", "Ice Sword" -> {
+                    if (inventory.size() != inventorySize) {
+                        inventory.add(gp.object[gp.currentMap][i]);
+                        gp.object[gp.currentMap][i] = null;
                     }
                 }
             }
@@ -309,6 +327,7 @@ public class Lilies extends Entity{
         if (i != 999) {
             if (!gp.monster[gp.currentMap][i].invincible && gp.monster[gp.currentMap][i] != null) {
                 int damage = attack - gp.monster[gp.currentMap][i].defense;
+                checkHeal();
                 if (damage <= 0) {
                     damage = 0;
                 }
@@ -321,10 +340,13 @@ public class Lilies extends Entity{
                     exp += gp.monster[gp.currentMap][i].exp;
                     point += gp.monster[gp.currentMap][i].point;
                     gp.ui.addMessage("Exp + " + gp.monster[gp.currentMap][i].exp);
+                    monsterIsDead++;
+                    gp.ui.addMessage("Monster remaining: " + (allMonster - monsterIsDead));
                     gp.monster[gp.currentMap][i] = null;
                     checkLevelUp();
-                    checkHeal();
-                    resetMonster();
+                }
+                if (monsterIsDead == 18) {
+                    gp.gameState = gp.gameWin;
                 }
             }
         }
@@ -340,9 +362,6 @@ public class Lilies extends Entity{
             if(selectItem.type == typeShield) {
                 currentShield = selectItem;
                 defense = getDefense();
-            }
-            if(selectItem.type == typeConsumable) {
-                // later
             }
         }
     }
@@ -364,7 +383,7 @@ public class Lilies extends Entity{
     }
     public void checkHeal() {
         heal++;
-        if (heal == 4) {
+        if (heal == 3) {
             if (life < maxLife) {
                 life ++;
             }
@@ -372,14 +391,15 @@ public class Lilies extends Entity{
             gp.ui.addMessage("Heal");
         }
     }
-    public void resetMonster() {
-        monsterIsDead++;
-        if (monsterIsDead == 6) {
-            gp.aSetter.setMonster();
-            worldX= gp.tileSize * (gp.maxScreenCol/2) + (gp.tileSize * 3); // 72*(18/2) = 648
-            worldY = gp.tileSize * (gp.maxScreenRow/2) + (gp.tileSize * 3) - 16; // 72*(10/2) = 360
-            monsterIsDead = 0;
-        }
+    public void resetMonsterIsDeadMap1() {
+        monsterIsDead = 0;
+    }
+    public void resetMonsterIsDeadMap2() {
+        monsterIsDead = 8;
+    }
+    public void nextMap() {
+        gp.currentMap++;
+        setDefaultValuesNextMap();
     }
     public void draw(Graphics2D g2) {
         BufferedImage image = null;

@@ -1,4 +1,4 @@
-package Tiles;
+package tiles;
 
 import Main.GamePanel;
 import Main.UtilityTool;
@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Objects;
 
 public class TileManager {
 
@@ -23,7 +22,7 @@ public class TileManager {
         mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("/map/mapTest.txt", 0);
+        loadMap("/map/map.txt", 0);
         loadMap("/map/map2.txt", 1);
     }
 
@@ -69,6 +68,7 @@ public class TileManager {
         setup(43, "highGroundGlassTopSmallLeftBigWaterRight", true);
         setup(44, "highGroundGlassTopSmallWaterRight", true);
         setup(45, "stair", false);
+        setup(46, "water2", true);
 // ve dat
         setup(10, "ground", false);
 // ve cau
@@ -82,7 +82,7 @@ public class TileManager {
     public void setup(int index, String imageName, boolean collision) {
         UtilityTool uTool = new UtilityTool();
         try {
-            InputStream inputStream = getClass().getResourceAsStream("/tiles/" + imageName + ".png");
+            InputStream inputStream = getClass().getResourceAsStream("/tilesRes/" + imageName + ".png");
 
             if (inputStream != null) {
                 tile[index] = new Tile();

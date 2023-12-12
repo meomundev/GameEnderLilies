@@ -112,12 +112,9 @@ public class CollisionCheck {
         }
     }
 
-    // Phương thức kiểm tra xem một ô có hợp lệ không
     private boolean isTileValid(int tileNum) {
         return tileNum >= 0 && tileNum < gp.tileManager.tile.length;
     }
-
-    // Phương thức kiểm tra xem một tọa độ ô có hợp lệ không
     private boolean isTileValid(int col, int row) {
         return col >= 0 && col < gp.tileManager.mapTileNum.length &&
                 row >= 0 && row < gp.tileManager.mapTileNum[0].length;
